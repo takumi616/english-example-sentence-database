@@ -4,13 +4,14 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"os"
 	"golang.org/x/sync/errgroup"
 )
 
-func run(ctx context.Context) error {
+func run(ctx context.Context, listener net.Listener) error {
 	server := &http.Server{
-		Addr: ":8000",
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Request Path: %s", r.URL.Path[1:])
 		}),
@@ -21,7 +22,7 @@ func run(ctx context.Context) error {
 	//like sending cancel signal
 	eg, ctx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
-		err := server.ListenAndServe()
+		err := server.Serve(listener)
 		if err != nil && err != http.ErrServerClosed {
 			log.Printf("Failed to run http server: %v", err)
 			return err
@@ -42,8 +43,17 @@ func run(ctx context.Context) error {
 }
 
 func main() {
-	//Create run() to make it easy testing http server
-	err := run(context.Background())
+	if len(os.Args) != 2 {
+		log.Fatal("Input port number as a parameter.")
+	}
+
+	port := os.Args[1]
+	listener, err := net.Listen("tcp", ":" + port)
+	if err != nil {
+		log.Fatalf("Failed to get a listener with port %s: %v", port, err)
+	}
+
+	err = run(context.Background(), listener)
 	if err != nil {
 		log.Printf("Main process error: %v", err)
 	} else {
