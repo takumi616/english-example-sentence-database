@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"testing"
 	"golang.org/x/sync/errgroup"
@@ -11,16 +13,24 @@ import (
 func TestRun(t *testing.T) {
 	//To send cancel signal, create ctx with cancel func
 	ctx, cancel := context.WithCancel(context.Background())
-	
+
+	listener, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		t.Fatalf("Failed to get a listener with port: %v", err)
+	}
+
 	//Run http server
 	eg, ctx := errgroup.WithContext(ctx)
 	eg.Go(func() error {
-		return run(ctx)
+		return run(ctx, listener)
 	})
 
-	//Send http request and get response body to test http request and response works correctly
+	//Send http request and get response body 
+	//to test that http request and response works correctly
 	input := "api/vocabularies"
-	response, err := http.Get("http://localhost:8000/" + input)
+	url := fmt.Sprintf("http://%s/%s", listener.Addr().String(), input)
+	t.Logf("Http request URL: %q", url)
+	response, err := http.Get(url)
 	if err != nil {
 		t.Errorf("Failed to get http response: %v", err)
 	}
