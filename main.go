@@ -6,8 +6,8 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"os"
 	"golang.org/x/sync/errgroup"
+	"github.com/takumi616/go-english-vocabulary-api/config"
 )
 
 func run(ctx context.Context, listener net.Listener) error {
@@ -43,11 +43,7 @@ func run(ctx context.Context, listener net.Listener) error {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		log.Fatal("Input port number as a parameter.")
-	}
-
-	port := os.Args[1]
+	port := config.GetConfig().Port
 	listener, err := net.Listen("tcp", ":" + port)
 	if err != nil {
 		log.Fatalf("Failed to get a listener with port %s: %v", port, err)

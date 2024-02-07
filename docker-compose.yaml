@@ -1,0 +1,13 @@
+services:
+  golang:
+    build:
+      context: .
+    env_file:
+      - .env
+    container_name: ${GOLANG_CONTAINER}
+    volumes:
+      - .:/app
+    ports:
+      - "${APP_LOCAL_PORT}:${APP_CONTAINER_PORT}"
+
+
