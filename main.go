@@ -10,7 +10,18 @@ import (
 	"github.com/takumi616/go-english-vocabulary-api/config"
 )
 
-func run(ctx context.Context, listener net.Listener) error {
+func run(ctx context.Context) error {
+	config, err := config.GetConfig()
+	if err != nil {
+		return err
+	}
+
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
+	if err != nil {
+		log.Fatalf("Failed to get a listener with port %d: %v", config.Port, err)
+	}
+
+
 	server := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, "Request Path: %s", r.URL.Path[1:])
@@ -33,7 +44,7 @@ func run(ctx context.Context, listener net.Listener) error {
 	//Wait for cancel notification 
 	//ctx is canceled when groutine running http server returns error
 	<-ctx.Done()
-	err := server.Shutdown(context.Background())
+	err = server.Shutdown(context.Background())
 	if err != nil {
 		log.Printf("Failed to shutdown http server: %v", err)
 	}
@@ -43,13 +54,7 @@ func run(ctx context.Context, listener net.Listener) error {
 }
 
 func main() {
-	port := config.GetConfig().Port
-	listener, err := net.Listen("tcp", ":" + port)
-	if err != nil {
-		log.Fatalf("Failed to get a listener with port %s: %v", port, err)
-	}
-
-	err = run(context.Background(), listener)
+	err := run(context.Background())
 	if err != nil {
 		log.Printf("Main process error: %v", err)
 	} else {
