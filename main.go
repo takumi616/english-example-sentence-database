@@ -6,21 +6,29 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os/signal"
+	"syscall"
 	"golang.org/x/sync/errgroup"
 	"github.com/takumi616/go-english-vocabulary-api/config"
 )
 
 func run(ctx context.Context) error {
+	//Handle signal
+	ctx, stop := signal.NotifyContext(ctx, syscall.SIGTERM)
+	defer stop()
+
+	//Get config (environment variables)
 	config, err := config.GetConfig()
 	if err != nil {
+		log.Printf("Failed to get config: %v", err)
 		return err
 	}
 
+	//Set up http listener with port from config file 
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.Port))
 	if err != nil {
 		log.Fatalf("Failed to get a listener with port %d: %v", config.Port, err)
 	}
-
 
 	server := &http.Server{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +65,5 @@ func main() {
 	err := run(context.Background())
 	if err != nil {
 		log.Printf("Main process error: %v", err)
-	} else {
-		log.Println("Main process finished successfully.")
 	}
 }

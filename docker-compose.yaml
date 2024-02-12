@@ -2,6 +2,8 @@ services:
   golang:
     build:
       context: .
+      #Select build stage
+      target: dev
     env_file:
       - .env
     container_name: ${GOLANG_CONTAINER}
