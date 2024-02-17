@@ -2,6 +2,8 @@ package store
 
 import "github.com/takumi616/go-english-vocabulary-api/entity"
 
+var Vocabularies = &VocabularyStore{Vocabularies: map[entity.VocabularyID]*entity.Vocabulary{}}
+
 type VocabularyStore struct {
 	LastID       entity.VocabularyID
 	Vocabularies map[entity.VocabularyID]*entity.Vocabulary
