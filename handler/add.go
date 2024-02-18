@@ -53,7 +53,7 @@ func (av *AddVocabulary) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	//Generate response with returned vocabulary id
 	response := struct {
-		ID entity.VocabularyID `json:"id"`
+		ID entity.VocabularyID `json:"vocabulary_id"`
 	}{ID: vocabularyID}
 	RespondJson(w, response, http.StatusCreated)
 }
