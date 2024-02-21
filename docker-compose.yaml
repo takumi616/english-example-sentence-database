@@ -1,7 +1,7 @@
 services:
   golang:
     build:
-      context: .
+      context: ./build/golang
       #Select build stage
       target: dev
     env_file:
@@ -12,7 +12,8 @@ services:
     ports:
       - "${APP_LOCAL_PORT}:${APP_CONTAINER_PORT}"
   postgres:
-    image: postgres:latest
+    build:
+      context: ./build/postgres
     env_file:
       - .env
     container_name: ${POSTGRES_CONTAINER}
@@ -20,7 +21,7 @@ services:
       - "${POSTGRES_LOCAL_PORT}:${POSTGRES_CONTAINER_PORT}"
     volumes:
       - data-store:/var/lib/postgresql/data
-      - ./initdb:/docker-entrypoint-initdb.d
+      - ./.tools/postgres:/var/lib/postgresql/schema
       
 volumes:
   data-store:

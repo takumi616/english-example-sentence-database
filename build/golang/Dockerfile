@@ -1,5 +1,5 @@
 #a container creating binary which is included in deploy container
-FROM golang:1.21.0-alpine3.18 as builder
+FROM golang:1.22.0-alpine3.18 as builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ CMD ["./main"]
 
 
 #Local development environment
-FROM golang:1.21 as dev
+FROM golang:1.22 as dev
 WORKDIR /app
 RUN go install github.com/cosmtrek/air@latest
 CMD ["air"]
