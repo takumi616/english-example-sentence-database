@@ -1,4 +1,4 @@
-/*create table userinfo(
+create table userinfo(
     id  serial PRIMARY KEY,
     user_name varchar(30) not null,
     user_password varchar(30) not null,
