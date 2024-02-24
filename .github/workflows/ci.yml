@@ -24,6 +24,9 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_DB: english_vocabulary_test
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: postgres
+          POSTGRES_SSLMODE: disable
     steps:
     #Install and set up golang on runner
     - name: Set up golang
