@@ -9,6 +9,21 @@ name: test
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 10
+        ports:
+          - 5432:5432
+        volumes:
+          - ./.tools/postgres:/var/lib/postgresql/schema
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: english_vocabulary_test
     steps:
     #Install and set up golang on runner
     - name: Set up golang
@@ -19,6 +34,17 @@ jobs:
     #to run actions against my code.
     - name: Checkout
       uses: actions/checkout@v4
+    - name: DB migration
+      run: |
+        docker exec -it postgres bash
+        apt-get install -y --no-install-recommends wget ca-certificates
+        rm -rf /var/lib/apt/lists/*
+        wget --no-check-certificate https://github.com/sqldef/sqldef/releases/download/v0.16.15/psqldef_linux_amd64.tar.gz 
+        tar xf psqldef_linux_amd64.tar.gz 
+        mv psqldef /usr/local/bin/psqldef 
+        rm psqldef_linux_amd64.tar.gz 
+        chmod +x /usr/local/bin/psqldef
+        psqldef -U postgres -p 5432 english_vocabulary_test </var/lib/postgresql/schema/schema.sql
     #Generate test coverage
     - name: Run tests with coverage report output
       run: go test ./... -coverprofile=coverage.out -covermode=atomic -coverpkg=./...
