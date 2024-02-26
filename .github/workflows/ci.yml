@@ -39,7 +39,7 @@ jobs:
       uses: actions/checkout@v4
     - name: DB migration
       run: |
-        go install github.com/k0kubun/sqldef/cmd/psqldef@latest
+        go install github.com/sqldef/sqldef/cmd/psqldef@latest
         psqldef -U postgres -p 5432 english_vocabulary_test <./.tools/postgres/schema.sql
     #Generate test coverage
     - name: Run tests with coverage report output
