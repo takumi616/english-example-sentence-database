@@ -19,8 +19,6 @@ jobs:
           --health-retries 10
         ports:
           - 5432:5432
-        #volumes:
-         # - ./.tools/postgres:/var/lib/postgresql/schema
         env:
           POSTGRES_USER: postgres
           POSTGRES_DB: english_vocabulary_test
