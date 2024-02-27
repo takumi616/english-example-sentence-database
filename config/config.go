@@ -5,7 +5,13 @@ import (
 )
 
 type Config struct {
-	Port	int	`env:"APP_CONTAINER_PORT"`
+	Port             int    `env:"APP_CONTAINER_PORT"`
+	DatabaseHost     string `env:"POSTGRES_HOST"`
+	DatabaseName     string `env:"POSTGRES_DB"`
+	DatabaseUser     string `env:"POSTGRES_USER"`
+	DatabasePassword string `env:"POSTGRES_PASSWORD"`
+	DatabasePort     int    `env:"POSTGRES_CONTAINER_PORT"`
+	DatabaseSSLMODE  string `env:"POSTGRES_SSLMODE"`
 }
 
 func GetConfig() (*Config, error) {
